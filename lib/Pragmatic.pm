@@ -8,10 +8,12 @@ use vars qw (@ISA $VERSION);
 
 @ISA = qw (Exporter);
 
-# The package version, both in 1.23 style *and* usable by MakeMaker:
-$VERSION = substr q$Revision: 1.6 $, 10;
-my $rcs = ' $Id: Pragmatic.pm,v 1.6 1999/09/21 14:00:00 binkley Exp $ ' ;
+$VERSION = '1.7'; # make sure CPAN doesn't croak!
+## The package version, both in 1.23 style *and* usable by MakeMaker:
+#$VERSION = substr q$Revision: 1.2 $, 10;
+my $rcs = ' $Id: Pragmatic.pm,v 1.2 2000/05/25 03:46:31 mah Exp $ ' ;
 
+sub DESTROY {}			# Fixes a problem with Class::Class.
 
 sub import ($) {
   my $package = shift;
