@@ -1,8 +1,10 @@
-# -*-perl-*-
+# Emacs, this is -*-perl-*- code.
+
+BEGIN { use Test; plan tests => 1; }
+
 use strict;
+
 use Test;
-BEGIN { plan tests => 1 }
 
-use Pragmatic;
-
-ok(1);
+eval "use Pragmatic;";
+ok (not $@);

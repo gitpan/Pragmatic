@@ -6,32 +6,32 @@ use Test;
 
 # Test 1:
 eval join '', <DATA>;
-ok ($@, '');
+ok (not $@);
 
 # Test 2, 3:
 eval { import X; };
-ok ($@, '');
+ok (not $@);
 eval { X->flintstone; }; # die
 ok ($@, qr/\S/);
 
 # Test 4, 5:
 eval { import X qw (-fred); };
-ok ($@, '');
+ok (not $@);
 ok (X->flintstone, 'fred');
 
 # Test 6, 7:
 eval { import X qw (-barney); };
-ok ($@, '');
+ok (not $@);
 ok (X->flintstone, 'barney');
 
 # Test 8, 9:
 eval { import X qw (-flintstone=wilma); };
-ok ($@, '');
+ok (not $@);
 ok (X->flintstone, 'wilma');
 
 # Test 10, 11:
 eval { import X qw (-flintstone=betty); };
-ok ($@, '');
+ok (not $@);
 eval { X->flintstone; }; # die
 ok ($@, qr/\S/);
 
@@ -40,13 +40,13 @@ __DATA__
 package X;
 
 use strict;
-use vars qw ($DEBUG @ISA %PRAGMATA);
+use vars qw($DEBUG @ISA %PRAGMATA);
 
 require Pragmatic;
 
 $DEBUG = 0;
 
-@ISA = qw (Pragmatic);
+@ISA = qw(Pragmatic);
 
 my $fred = sub { 'fred'; };
 my $barney = sub { 'barney'; };

@@ -9,8 +9,8 @@ use vars qw (@ISA $VERSION);
 @ISA = qw (Exporter);
 
 # The package version, both in 1.23 style *and* usable by MakeMaker:
-$VERSION = substr q$Revision: 1.4 $, 10;
-my $rcs = ' $Id: Pragmatic.pm,v 1.4 1999/09/16 12:54:56 binkley Exp $ ' ;
+$VERSION = substr q$Revision: 1.5 $, 10;
+my $rcs = ' $Id: Pragmatic.pm,v 1.5 1999/09/20 14:46:55 binkley Exp $ ' ;
 
 
 sub import ($) {
@@ -23,7 +23,7 @@ sub import ($) {
   # FIXME
 
   return $package->export_to_level (1, undef, @_)
-    if $package eq 'Pragmatic';
+    if $package eq __PACKAGE__;
 
   my $warn = sub (;$) {
     require Carp;
@@ -42,7 +42,8 @@ sub import ($) {
 
   # Export first, for side-effects (e.g., importing globals, then
   # setting them with pragmata):
-  $package->export_to_level (1, undef, @imports);
+  $package->export_to_level (1, undef, @imports)
+    if @imports;
 
   for (@pragmata) {
     no strict qw (refs);
@@ -52,10 +53,19 @@ sub import ($) {
 
     exists ${"$package\::PRAGMATA"}{$pragma}
       or &$die ("No such pragma '$pragma'");
-    ref ${"$package\::PRAGMATA"}{$pragma} eq 'CODE'
-      or &$die ("Invalid pragma '$pragma'");
-    &{${"$package\::PRAGMATA"}{$pragma}} ($package, @args)
-      or &$warn ("Pragma '$pragma' failed");
+
+    if (ref ${"$package\::PRAGMATA"}{$pragma} eq 'CODE') {
+      &{${"$package\::PRAGMATA"}{$pragma}} ($package, @args)
+	or &$warn ("Pragma '$pragma' failed");
+
+      # Let inheritance work for barewords:
+    } elsif (my $ref = $package->can ($pragma)) {
+      &$ref ($package, @args)
+	or &$warn ("Pragma '$pragma' failed");
+
+    } else {
+      &$die ("Invalid pragma '$pragma'");
+    }
   }
 }
 
@@ -139,13 +149,15 @@ Like this:
     %PRAGMATA =
       (first => sub { print "@_: first\n"; },
        second => sub { $SOME_GLOBAL = 1; },
-       third => \&something_else);
+       third => \&something_else,
+       fourth => 'name_of_sub');
 
 When a pragma is given in a C<use> statement, the leading hyphen is
 removed, and the code reference corresponding to that key in
-C<%PRAGMATA> is invoked with the name of the package as its argument
-list (this is the same as what happens with C<import>).  Additionally,
-any arguments given by the caller are included (see L<Using Pragmatic
+C<%PRAGMATA>, or a subroutine with the value's name, is invoked with
+the name of the package as the first member of the argument list (this
+is the same as what happens with C<import>).  Additionally, any
+arguments given by the caller are included (see L<Using Pragmatic
 Modules>, above).
 
 =head1 EXAMPLES
@@ -211,6 +223,20 @@ Modules>, above).
 
   %PRAGMATA = (super => sub { shift; push @ISA, @_; });
 
+=item 4. Inheriting pragmata:
+
+  package X;
+  @ISA = qw(Pragmatic);
+  %PRAGMATA = (debug => 'debug');
+  $DEBUG = 0;
+
+  sub debug { ${"$_[0]::DEBUG"} = 1; }
+
+  package Y:
+  @ISA = qw(X);
+  %PRAGMATA = (debug => 'debug');
+  $DEBUG = 0;
+
 =back
 
 =head1 SEE ALSO
@@ -237,7 +263,8 @@ was no pragma I<xxx> defined for MyModule.
 =item Invalid pragma '%s'
 
 (F) The writer of the called package tried something like "%PRAGMATA =
-(xxx => not_a_sub)" and assigned I<xxx> a non-code reference.
+(xxx => not_a_sub)" and either assigned I<xxx> a non-code reference,
+or I<xxx> is not a method in that package.
 
 =item Pragma '%s' failed
 

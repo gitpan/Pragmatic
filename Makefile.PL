@@ -8,3 +8,15 @@ WriteMakefile
    ABSTRACT => 'Exporter with pragma support',
    NAME => 'Pragmatic',
    VERSION_FROM => 'lib/Pragmatic.pm');
+
+package MY;
+
+# Auto-generate the README from lib/Pramatic.pm:
+sub postamble {
+  q|
+README: $(VERSION_FROM)
+	perldoc -t $< > $@
+
+all:: README
+|;
+}

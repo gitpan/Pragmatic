@@ -6,30 +6,30 @@ use Test;
 
 # Test 1:
 eval join '', <DATA>;
-ok ($@, '');
+ok (not $@);
 
 # Test 2:
 eval { import X qw (-abc); };
-ok ($@, '');
+ok (not $@);
 
 # Test 3, 4:
 eval { import Y qw (-def); };
-ok ($@, '');
+ok (not $@);
 ok ($Y::DEBUG, 1);
 
-# Quiet warnings:
-$Y::DEBUG || 1;
+# Get rid of "used only once" warning:
+do { 1; } if $Y::DEBUG;
 
 __DATA__
 
 package X;
 
 use strict;
-use vars qw (@ISA %PRAGMATA);
+use vars qw(@ISA %PRAGMATA);
 
 require Pragmatic;
 
-@ISA = qw (Pragmatic);
+@ISA = qw(Pragmatic);
 
 %PRAGMATA = (abc => sub { 1; });
 
@@ -43,7 +43,7 @@ use vars qw ($DEBUG @ISA %PRAGMATA);
 
 $DEBUG = 0;
 
-@ISA = qw (X);
+@ISA = qw(X);
 
 %PRAGMATA = (def => sub { $DEBUG = 1; });
 

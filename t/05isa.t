@@ -2,20 +2,22 @@
 
 BEGIN { use Test; plan tests => 5; }
 
+use strict;
+
 use Test;
 
 # Test 1:
 eval join '', <DATA>;
-ok ($@, '');
+ok (not $@);
 
 # Test 2, 3:
 eval { import X; };
-ok ($@, '');
+ok (not $@);
 ok (X->physics, 'fun');
 
 # Test 4, 5:
-eval { import X qw (-notso); };
-ok ($@, '');
+eval { import X qw(-notso); };
+ok (not $@);
 ok (X->physics, 'nofun');
 
 __DATA__
@@ -33,11 +35,11 @@ sub physics { 'nofun'; }
 package X;
 
 use strict;
-use vars qw (@ISA %PRAGMATA);
+use vars qw(@ISA %PRAGMATA);
 
 require Pragmatic;
 
-@ISA = qw (Pragmatic Truth);
+@ISA = qw(Pragmatic Truth);
 
 %PRAGMATA =
   (notso => sub {
