@@ -12,7 +12,7 @@ ok (not $@);
 eval { import X; };
 ok (not $@);
 eval { X->flintstone; }; # die
-ok ($@, qr/\S/);
+ok ($@);
 
 # Test 4, 5:
 eval { import X qw (-fred); };
@@ -33,7 +33,7 @@ ok (X->flintstone, 'wilma');
 eval { import X qw (-flintstone=betty); };
 ok (not $@);
 eval { X->flintstone; }; # die
-ok ($@, qr/\S/);
+ok ($@);
 
 __DATA__
 
