@@ -9,8 +9,8 @@ use vars qw (@ISA $VERSION);
 @ISA = qw (Exporter);
 
 # The package version, both in 1.23 style *and* usable by MakeMaker:
-$VERSION = substr q$Revision: 1.5 $, 10;
-my $rcs = ' $Id: Pragmatic.pm,v 1.5 1999/09/20 14:46:55 binkley Exp $ ' ;
+$VERSION = substr q$Revision: 1.6 $, 10;
+my $rcs = ' $Id: Pragmatic.pm,v 1.6 1999/09/21 14:00:00 binkley Exp $ ' ;
 
 
 sub import ($) {
@@ -59,7 +59,8 @@ sub import ($) {
 	or &$warn ("Pragma '$pragma' failed");
 
       # Let inheritance work for barewords:
-    } elsif (my $ref = $package->can ($pragma)) {
+    } elsif (my $ref = $package->can
+	     (${"$package\::PRAGMATA"}{$pragma})) {
       &$ref ($package, @args)
 	or &$warn ("Pragma '$pragma' failed");
 
