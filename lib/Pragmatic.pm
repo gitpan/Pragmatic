@@ -9,8 +9,8 @@ use vars qw (@ISA $VERSION);
 @ISA = qw (Exporter);
 
 # The package version, both in 1.23 style *and* usable by MakeMaker:
-$VERSION = substr q$Revision: 1.3 $, 10;
-my $rcs = ' $Id: Pragmatic.pm,v 1.3 1999/09/15 16:57:46 binkley Exp $ ' ;
+$VERSION = substr q$Revision: 1.4 $, 10;
+my $rcs = ' $Id: Pragmatic.pm,v 1.4 1999/09/16 12:54:56 binkley Exp $ ' ;
 
 
 sub import ($) {
@@ -249,5 +249,12 @@ inconsisten state after this.  Proceed with caution.
 =head1 AUTHORS
 
 B. K. Oxley (binkley) at Home E<lt>binkley@bigfoot.comE<gt>
+
+=head1 COPYRIGHT
+
+  Copyright 1999, B. K. Oxley.
+
+This library is free software; you may redistribute it and/or modify
+it under the same terms as Perl itself.
 
 =cut
