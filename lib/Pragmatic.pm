@@ -8,23 +8,15 @@ use vars qw (@ISA $VERSION);
 
 @ISA = qw (Exporter);
 
-$VERSION = '1.7'; # make sure CPAN doesn't croak!
-## The package version, both in 1.23 style *and* usable by MakeMaker:
-#$VERSION = substr q$Revision: 1.2 $, 10;
-my $rcs = ' $Id: Pragmatic.pm,v 1.2 2000/05/25 03:46:31 mah Exp $ ' ;
+# The package version, both in 1.23 style *and* usable by MakeMaker:
+$VERSION = '1.7';
+my $rcs = '$Id: Pragmatic.pm 164 2005-03-15 21:42:20Z binkley $' ;
 
-sub DESTROY {}			# Fixes a problem with Class::Class.
 
 sub import ($) {
   my $package = shift;
 
-  # WTF?  The documentation for Exporter::export_to_level looks like
-  # this: $package->export_to_level (1, @_); but the source discards
-  # the second argument in the list, so I need to call it like this:
-  # $package->export_to_level (1, undef, @_).  Report bug.  --bko
-  # FIXME
-
-  return $package->export_to_level (1, undef, @_)
+  return $package->export_to_level (1, $package, @_)
     if $package eq __PACKAGE__;
 
   my $warn = sub (;$) {
@@ -40,11 +32,11 @@ sub import ($) {
   };
 
   my @imports = grep /^[^-]/, @_;
-  my @pragmata = map { s/^-//o; $_; } grep /^-/, @_;
+  my @pragmata = map { substr($_, 1); } grep /^-/, @_;
 
   # Export first, for side-effects (e.g., importing globals, then
   # setting them with pragmata):
-  $package->export_to_level (1, undef, @imports)
+  $package->export_to_level (1, $package, @imports)
     if @imports;
 
   for (@pragmata) {
@@ -278,13 +270,18 @@ inconsisten state after this.  Proceed with caution.
 
 =head1 AUTHORS
 
-B. K. Oxley (binkley) at Home E<lt>binkley@bigfoot.comE<gt>
+B. K. Oxley (binkley) E<lt>binkley@alumni.rice.eduE<gt>
 
 =head1 COPYRIGHT
 
-  Copyright 1999, B. K. Oxley.
+  Copyright 1999-2005, B. K. Oxley.
 
 This library is free software; you may redistribute it and/or modify
 it under the same terms as Perl itself.
+
+=head1 THANKS
+
+Thanks to Kevin Caswick E<lt>KCaswick@wspackaging.comE<gt> for a great
+patch to run under Perl 5.8.
 
 =cut

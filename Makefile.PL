@@ -4,7 +4,7 @@ use strict;
 use ExtUtils::MakeMaker;
 
 WriteMakefile
-  (AUTHOR => 'B. K. Oxley (binkley) at Home <binkley@bigfoot.com>',
+  (AUTHOR => 'B. K. Oxley (binkley) <binkley@alumni.rice.edu>',
    ABSTRACT => 'Exporter with pragma support',
    NAME => 'Pragmatic',
    VERSION_FROM => 'lib/Pragmatic.pm');
